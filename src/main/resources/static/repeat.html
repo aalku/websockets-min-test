@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+</head>
+
+<body>
+	<div id="container"  style="width:100%; height: 100%;">
+		<h1>Open dev tools</h1>
+	</div>
+	
+	<script>
+		let log = console.log;
+		function connect() {
+			let sock = new WebSocket(new URL('/ws', window.location.href).href.replace(/^http/,"ws"));
+			function sayHello() {
+				sock.send("Hello");
+			}
+			sock.onmessage = async function (e) {
+				log('message', e);
+				sock.close();
+			};
+			sock.onerror = async function (e) {
+				log('error', e);
+				sock.close();
+			};
+			sock.onclose = function () {
+				log('close');
+			};
+			sock.onopen = function (){
+				log('onopen');
+				sayHello();
+			};
+		}
+		intervalHandler = window.setInterval(connect, 5000);
+		connect();
+	</script>
+</body>
+
+
+</html>
